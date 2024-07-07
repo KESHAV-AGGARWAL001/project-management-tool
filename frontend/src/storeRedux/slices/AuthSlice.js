@@ -24,6 +24,8 @@ export const registerUser = createAsyncThunk(
       "http://localhost:3000/api/user/register",
       userCredentials
     );
+    if (response.data) {
+    }
     return response.data;
   }
 );
