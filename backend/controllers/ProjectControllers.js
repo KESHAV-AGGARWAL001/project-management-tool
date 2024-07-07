@@ -30,6 +30,22 @@ const createProject = asyncHandler(async (req, res) => {
   }
 });
 
+// check project function
+const checkProject = asyncHandler(async (req, res) => {
+  const { projectId } = req.params;
+  // console.log(projectId);
+  try {
+    const findProject = await Project.findById(projectId);
+    if (findProject) {
+      return res.status(201).json({ success: true });
+    } else {
+      return res.status(201).json({ success: false });
+    }
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+});
+
 const deleteProject = asyncHandler(async (req, res) => {
   try {
     const projectId = req.params.id;
@@ -226,4 +242,5 @@ export {
   removeMemberFromProject,
   getProjectDetails,
   getAllMembersOfProject,
+  checkProject,
 };

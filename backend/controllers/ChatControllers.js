@@ -30,48 +30,20 @@ const getChatsForProject = asyncHandler(async (req, res) => {
 
   try {
     const chats = await Chat.find({ projectId })
-      .populate("latestMessage")
-      .populate("members", "email");
+      .populate("members", "email")
+      .populate("messages", "content")
+      .populate("latestMessage");
 
     if (!chats) {
       res.status(404).json({ message: "No Chats available" });
       return;
     }
 
+    // console.log(chats);
     res.status(200).json(chats);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(401).json({ message: error.message });
   }
 });
 
-const getChatHistory = asyncHandler(async (req, res) => {
-  const { chatId } = req.params;
-
-  if (!chatId) {
-    res.status(400).json({ message: "Chat ID is required" });
-    return;
-  }
-
-  try {
-    const chat = await Chat.findById(chatId)
-      .populate({
-        path: "messages",
-        populate: {
-          path: "sender",
-          select: "email",
-        },
-      })
-      .populate("members", "email");
-
-    if (!chat) {
-      res.status(404).json({ message: "Chat not found" });
-      return;
-    }
-
-    res.status(200).json(chat);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-export { createChat, getChatsForProject, getChatHistory };
+export { createChat, getChatsForProject };

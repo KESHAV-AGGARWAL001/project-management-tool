@@ -2,6 +2,7 @@
 import { Router } from "express";
 import {
   addMemberToProject,
+  checkProject,
   createProject,
   deleteProject,
   getAllMembersOfProject,
@@ -29,5 +30,6 @@ ProjectRouter.get(
   isManager,
   getAllMembersOfProject
 );
+ProjectRouter.get("/checkProject/:projectId", Protect, checkProject);
 
 export default ProjectRouter;
