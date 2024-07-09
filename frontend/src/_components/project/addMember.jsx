@@ -2,6 +2,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import MembersTable from "./Table";
+import sendEmail from "../../utils/sendMails";
 
 const AddMember = () => {
   const [members, setMembers] = useState([]);
@@ -62,14 +63,14 @@ const AddMember = () => {
           },
         }
       );
-
       //   console.log(newUserResponse.data);
+
+      sendEmail(user.email, newMemberEmail);
 
       fetchMembers();
       setNewMemberEmail("");
     } catch (error) {
       console.error("Error adding member:", error);
-      alert("Something went wrong!!  Make sure you put the right user email");
     }
   };
 
