@@ -40,9 +40,11 @@ const createTask = asyncHandler(async (req, res) => {
 });
 
 const getTasksByProject = asyncHandler(async (req, res) => {
-  const { projectId } = req.params;
+  const { projectId } = req.query;
   try {
-    const tasks = await Task.find({ projectId });
+    const tasks = await Task.find({ projectId })
+      .populate("assignedTo", "email")
+      .populate();
     res.status(200).json(tasks);
   } catch (error) {
     res.status(400).json({ message: error.message });

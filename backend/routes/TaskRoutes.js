@@ -10,12 +10,7 @@ import {
 
 const TaskRouter = Router();
 
-TaskRouter.get(
-  "/getAllTasks/:projectId",
-  Protect,
-  isManager,
-  getTasksByProject
-);
+TaskRouter.get("/getAllTasks", Protect, isManager, getTasksByProject);
 TaskRouter.post("/createTask", Protect, isManager, createTask);
 TaskRouter.put("/updateTask", Protect, isManager, updateTask);
 TaskRouter.delete("/deleteTask", Protect, isManager, deleteTask);
