@@ -67,6 +67,29 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
+const checkUserPresentOrNot = asyncHandler(async (req, res) => {
+  // console.log(req);
+  const { email } = req.query;
+  try {
+    // console.log("request params for email  :->", req.query);
+    if (!email) {
+      return res.json({
+        success: false,
+        message: "No email is send from frontend",
+      });
+    }
+
+    const user = await User.find({ email });
+    // console.log("user data at backend on fetching ", user);
+    if (!user) {
+      return res.json({ success: false });
+    }
+    return res.json({ success: true, user });
+  } catch (error) {
+    res.json({ message: error.message });
+  }
+});
+
 const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
   try {
@@ -148,4 +171,5 @@ export {
   registerUser,
   resetPassword,
   updateUserProfile,
+  checkUserPresentOrNot,
 };

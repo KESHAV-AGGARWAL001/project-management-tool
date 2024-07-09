@@ -6,12 +6,11 @@ import { logActivity } from "./ActivityControllers.js";
 import { createNotification } from "./NotificationControllers.js";
 
 const createProject = asyncHandler(async (req, res) => {
-  const { projectName, description, members, deadline, createdBy } = req.body;
+  const { projectName, description, deadline, createdBy } = req.body;
   try {
     const project = new Project({
       projectName,
       description,
-      members,
       createdBy,
       deadline,
     });
@@ -114,8 +113,11 @@ const updateProject = asyncHandler(async (req, res) => {
 });
 
 const addMemberToProject = asyncHandler(async (req, res) => {
-  const projectId = req.params.id;
-  const memberId = req.body.memberId;
+  // console.log(req);
+  // console.log("Request body from add member: -", req.body.memberId);
+  const { memberId, projectId } = req.body;
+
+  // console.log("Add member -> ", projectId, memberId);
 
   if (!projectId || !memberId) {
     res.status(404);
@@ -148,57 +150,11 @@ const addMemberToProject = asyncHandler(async (req, res) => {
   }
 });
 
-const removeMemberFromProject = asyncHandler(async (req, res) => {
-  const projectId = req.params.id;
-  const memberId = req.body.memberId;
-
-  if (!projectId || !memberId) {
-    res.status(404);
-    throw new Error("Project not found or member not found");
-  }
-
-  try {
-    const project = await Project.findById(projectId);
-
-    const member = await User.findById(memberId);
-
-    if (project && member) {
-      if (!project.members.includes(member)) {
-        res.status(201).json({ message: "Already not present" });
-      } else {
-        project.members = project.members.filter((id) => id !== memberId);
-
-        createNotification(
-          memberId,
-          `Thanks for working for this task. Now this task is given to someone else`
-        );
-
-        res.json({ message: "Member removed from project successfully" });
-      }
-      const updatedProject = await project.save();
-      const activity = {
-        projectId: project._id,
-        userId: project.createdBy,
-        action: "removeMemberFromProject",
-        details: `Member is removed to project successfully`,
-      };
-      logActivity(activity);
-      res.json(updatedProject);
-    } else {
-      res.status(404);
-      throw new Error("Project not found or member not found");
-    }
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
 const getProjectDetails = asyncHandler(async (req, res) => {
-  const projectId = req.body.id;
+  const { projectId } = req.params;
 
   if (!projectId) {
-    res.status(404);
-    throw new Error("Project id  not found");
+    res.status(404).json({ message: "Project Id not found" });
   }
 
   try {
@@ -215,14 +171,18 @@ const getProjectDetails = asyncHandler(async (req, res) => {
 });
 
 const getAllMembersOfProject = asyncHandler(async (req, res) => {
-  const projectId = req.body.id;
+  const { projectId } = req.params;
+  // console.log(projectId);
+
   if (!projectId) {
-    res.status(404);
-    throw new Error("Project id  not found");
+    return res.status(404).json({ message: "Project Id not found" });
   }
 
   try {
-    const project = await Project.findById(projectId);
+    const project = await Project.findById(projectId).populate(
+      "members",
+      "name email role _id"
+    );
     if (project) {
       res.json(project.members);
     } else {
@@ -239,7 +199,6 @@ export {
   deleteProject,
   updateProject,
   addMemberToProject,
-  removeMemberFromProject,
   getProjectDetails,
   getAllMembersOfProject,
   checkProject,

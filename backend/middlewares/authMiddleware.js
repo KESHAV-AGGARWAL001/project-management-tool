@@ -5,6 +5,7 @@ import User from "../models/UserModel.js";
 const Protect = asyncHandler(async (req, res, next) => {
   try {
     const token = req.headers.token;
+    console.log(token);
     if (!token) {
       res.status(401).json({ message: "No token is available" });
     }

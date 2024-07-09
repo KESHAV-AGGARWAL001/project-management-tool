@@ -12,6 +12,8 @@ const createTask = asyncHandler(async (req, res) => {
     dueDate,
     createdBy,
   } = req.body;
+
+  console.log(req.body);
   try {
     const task = new Task({
       title,

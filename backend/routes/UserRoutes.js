@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  checkUserPresentOrNot,
   forgotPassword,
   getUserProfile,
   loginUser,
@@ -13,8 +14,9 @@ const userRouter = Router();
 userRouter.get("/profile", Protect, getUserProfile);
 userRouter.post("/resetPassword/:id/:token", resetPassword);
 userRouter.post("/register", registerUser);
-userRouter.post("/login", Protect, loginUser);
+userRouter.post("/login", loginUser);
 userRouter.post("/forgotPassword", forgotPassword);
 userRouter.post("/updateUser", Protect, updateUserProfile);
+userRouter.get("/checkProfile", Protect, checkUserPresentOrNot);
 
 export default userRouter;
