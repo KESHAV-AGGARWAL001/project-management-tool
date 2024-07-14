@@ -58,12 +58,17 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const getUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.userId).select("-password");
-  if (user) {
-    res.json(user);
-  } else {
-    res.status(404);
-    throw new Error("User not found");
+  try {
+    const user = await User.find({ email: req.query.userEmail }).select(
+      "-password"
+    );
+    if (user) {
+      res.status(200).json(user);
+    } else {
+      res.status(201).json({ message: "Not present" });
+    }
+  } catch (error) {
+    res.json({ message: error.message });
   }
 });
 

@@ -3,6 +3,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import MembersTable from "./Table";
 import sendEmail from "../../utils/sendMails";
+import socket from "../../socket";
 
 const AddMember = () => {
   const [members, setMembers] = useState([]);
@@ -54,7 +55,7 @@ const AddMember = () => {
       const user = response.data.user[0]; // Ensure the structure matches your backend response
       //   console.log("User Data to frontend:) ", user);
       // Add the new member to the project
-      await axios.post(
+      const newUserResponse = await axios.post(
         `http://localhost:3000/api/project/addNewMember/${projectId}`,
         { memberId: user._id, projectId },
         {
@@ -63,12 +64,25 @@ const AddMember = () => {
           },
         }
       );
-      //   console.log(newUserResponse.data);
+      setNewMemberEmail("");
+
+      // console.log(newUserResponse.data);
+
+      if (
+        newUserResponse.data?.message ===
+        "This member is already in the project"
+      ) {
+        alert("This member is already in the project");
+        return;
+      }
 
       sendEmail(user.email, newMemberEmail);
+      // console.log(response.data.user[0]);
 
+      const memberId = response.data.user[0]?._id;
+
+      socket.emit("add-member", "New Member is added", projectId, memberId);
       fetchMembers();
-      setNewMemberEmail("");
     } catch (error) {
       console.error("Error adding member:", error);
     }

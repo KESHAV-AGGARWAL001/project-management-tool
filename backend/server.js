@@ -39,6 +39,11 @@ io.on("connection", (socket) => {
     // console.log("project id -> ", projectId);
     io.to(projectId).emit("newMessage", message);
   });
+
+  socket.on("add-member", (message, projectId, memberId) => {
+    console.log(message);
+    io.to(projectId).except(memberId).emit("newMessage", message);
+  });
 });
 
 app.use(express.json());
