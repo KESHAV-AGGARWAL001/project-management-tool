@@ -52,7 +52,7 @@ A full-stack project management application built with React, Node.js, Express, 
 - Socket.IO for real-time communication
 - JWT for authentication
 - Bcrypt for password hashing
-- Nodemailer for emails
+- Rate Limiter ( Sliding Window Log) is used
 
 ## Project Structure
 
